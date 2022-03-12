@@ -1,0 +1,19 @@
+name: CI
+on: [push]
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Installs Node js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 17.x
+      - name: Install dependencies
+        run: |
+          cp .env.cicd .env
+          npm install
+      - name: run Eslint
+        run: npm run lint
