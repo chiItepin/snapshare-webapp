@@ -1,3 +1,8 @@
+/* eslint-disable default-param-last */
+import {
+  useSelector,
+  TypedUseSelectorHook,
+} from 'react-redux';
 import IUser from '../templates/user';
 
 interface IFollower {
@@ -12,26 +17,34 @@ export interface IState {
   unSeenNotificationsCount: number;
 }
 
+export type IActionTypes = 'SET_USER' | 'SET_FOLLOWERS' | 'SET_UNSEEN_NOTIFICATIONS_COUNT';
+
 export interface IActions {
-  type: string;
+  type: IActionTypes;
   payload: any;
 }
 
-export const initialState: IState = {
-  user: {
-    _id: '',
-    email: '',
-    token: '',
-    loggedInDate: '',
-    image: '',
-  },
-  posts: [],
-  followers: [],
-  unSeenNotificationsCount: 0,
-};
+const getUser = () => ({
+  _id: '',
+  email: '',
+  token: '',
+  loggedInDate: '',
+  image: '',
+});
 
-// eslint-disable-next-line default-param-last
-const Reducer = (state: IState = initialState, action: IActions): IState => {
+export const initialState: IState = (typeof window !== 'undefined' && localStorage.getItem('persistedState'))
+  ? JSON.parse(localStorage.getItem('persistedState'))
+  : {
+    user: getUser(),
+    posts: [],
+    followers: [],
+    unSeenNotificationsCount: 0,
+  };
+
+const Reducer = (
+  state: IState = initialState,
+  action: IActions,
+): IState => {
   switch (action?.type || '') {
     case 'SET_USER':
       return {
@@ -52,5 +65,7 @@ const Reducer = (state: IState = initialState, action: IActions): IState => {
       return state;
   }
 };
+
+export const useAppSelector: TypedUseSelectorHook<IState> = useSelector;
 
 export default Reducer;

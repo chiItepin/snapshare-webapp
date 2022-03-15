@@ -1,4 +1,5 @@
 import React, { FunctionComponent } from 'react';
+import withAuth from '../components/HOC/withAuth';
 
 const PostsList: FunctionComponent = () => (
   <>
@@ -6,4 +7,4 @@ const PostsList: FunctionComponent = () => (
   </>
 );
 
-export default PostsList;
+export default withAuth(PostsList);

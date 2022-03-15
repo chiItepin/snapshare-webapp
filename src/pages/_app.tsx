@@ -1,14 +1,19 @@
 import React, { FunctionComponent } from 'react';
 import { AppProps } from 'next/app';
 import Head from 'next/head';
-import { Container } from '@nextui-org/react';
+import { Container, NextUIProvider } from '@nextui-org/react';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
+import { Toaster } from 'react-hot-toast';
 import reducer from '../reducer';
-import NavBar from '../components/NavBar';
+import NavBar from '../components/ui/NavBar';
 import '../styles/main.css';
 
 const store = createStore(reducer);
+
+store.subscribe(() => {
+  localStorage.setItem('persistedState', JSON.stringify(store.getState()));
+});
 
 const App: FunctionComponent<AppProps> = ({
   Component,
@@ -19,18 +24,21 @@ const App: FunctionComponent<AppProps> = ({
       <link rel="shortcut icon" href="/icon.png" />
       <title>Snapshare</title>
       <meta name="description" content="Share snaps!" />
-      <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" />
     </Head>
 
     <Provider store={store}>
-      <NavBar />
+      <Toaster
+        position="top-right"
+      />
+      <NextUIProvider>
+        <NavBar />
 
-      <div className="app">
-        <Container>
-          <Component {...pageProps} />
-        </Container>
-      </div>
+        <div className="app">
+          <Container>
+            <Component {...pageProps} />
+          </Container>
+        </div>
+      </NextUIProvider>
     </Provider>
 
   </>
