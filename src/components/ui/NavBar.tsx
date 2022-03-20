@@ -52,7 +52,7 @@ const NavBar: FunctionComponent = () => {
                   <Button>Profile</Button>
                 </Button.Group>
 
-                <Button size="xs" ghost onClick={handleLogout}>Logout</Button>
+                <Button size="xs" ghost onClick={handleLogout}>Log out</Button>
               </>
               )}
 

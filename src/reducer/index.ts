@@ -24,12 +24,13 @@ export interface IActions {
   payload: any;
 }
 
-const getUser = () => ({
+const getUser = (): IUser => ({
   _id: '',
   email: '',
   token: '',
   loggedInDate: '',
   image: '',
+  expireDate: '',
 });
 
 export const initialState: IState = (typeof window !== 'undefined' && localStorage.getItem('persistedState'))

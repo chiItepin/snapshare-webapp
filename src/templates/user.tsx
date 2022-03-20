@@ -7,6 +7,7 @@ interface IUser {
   loggedInDate?: string;
   createdAt?: string;
   updatedAt?: string;
+  expireDate?: string;
 }
 
 export default IUser;

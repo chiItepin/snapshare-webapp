@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux';
 import { useRouter } from 'next/router';
 import { toast } from 'react-hot-toast';
 import { AxiosError } from 'axios';
+import moment from 'moment';
 import Link from 'next/link';
 import {
   Card,
@@ -13,26 +14,26 @@ import {
   Input,
   Spacer,
 } from '@nextui-org/react';
-import moment from 'moment';
 import { IActions } from '../../reducer';
 import IUser from '../../templates/user';
 import useApi from '../../useApi';
 
-const LoginView: FunctionComponent = () => {
+const SignupView: FunctionComponent = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
-  const { loginUser } = useApi();
+  const { User } = useApi();
   const router = useRouter();
 
   const handleSubmit = () => {
     if (!email || !password || isLoading) return;
 
     setIsLoading(true);
-    toast.promise(loginUser(email, password), {
+    toast.promise(User.createUser(email, password, confirmPassword), {
       loading: 'Loading...',
-      success: 'Logged in successfully!',
+      success: 'Signed up successfully!',
       error: (err: AxiosError) => err.response.data?.message || 'Unknown error',
     })
       .then((res) => {
@@ -40,8 +41,8 @@ const LoginView: FunctionComponent = () => {
 
         const userModel = {
           email,
-          _id: res.data.userId,
-          token: res.data.data,
+          _id: res.data.data._id,
+          token: res.data.token,
           expireDate: moment().add(6, 'days').format(),
         } as IUser;
 
@@ -68,13 +69,14 @@ const LoginView: FunctionComponent = () => {
       <Grid xs={12} sm={6}>
         <Card css={{ width: '100%' }}>
           <Card.Header>
-            <Text b size={20}>Login</Text>
+            <Text b size={20}>Sign up</Text>
           </Card.Header>
           <Divider />
 
           <Card.Body css={{ py: '$10' }}>
             <Input
               label="Enter your email"
+              type="email"
               placeholder="Email"
               clearable
               bordered
@@ -96,6 +98,19 @@ const LoginView: FunctionComponent = () => {
               onKeyPress={handleKeyPress}
               required
             />
+
+            <Spacer y={1} />
+
+            <Input.Password
+              label="Confirm your password"
+              placeholder="Confirm Password"
+              clearable
+              bordered
+              initialValue={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              onKeyPress={handleKeyPress}
+              required
+            />
           </Card.Body>
 
           <Divider />
@@ -105,7 +120,7 @@ const LoginView: FunctionComponent = () => {
                 <Button
                   type="submit"
                   size="xs"
-                  disabled={!email || !password || isLoading}
+                  disabled={!email || !password || isLoading || !confirmPassword}
                   onClick={handleSubmit}
                 >
                   Submit
@@ -123,4 +138,4 @@ const LoginView: FunctionComponent = () => {
   );
 };
 
-export default LoginView;
+export default SignupView;
