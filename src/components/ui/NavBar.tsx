@@ -3,11 +3,11 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useDispatch } from 'react-redux';
 import { toast } from 'react-hot-toast';
+import cookieCutter from 'cookie-cutter';
 import {
   Card,
   Grid,
   Button,
-  Loading,
 } from '@nextui-org/react';
 import { useAppSelector, IActions } from '../../reducer';
 import logo from '../../assets/icon.png';
@@ -19,6 +19,10 @@ const NavBar: FunctionComponent = () => {
 
   const handleLogout = () => {
     toast.success('Logged out successfully!');
+
+    cookieCutter.set('userToken', '', { expires: new Date(0) });
+    cookieCutter.set('userId', '', { expires: new Date(0) });
+
     dispatch({
       type: 'SET_USER',
       payload: {},
@@ -29,11 +33,28 @@ const NavBar: FunctionComponent = () => {
     setLoaded(true);
   }, []);
 
-  if (!loaded) return <Loading />;
+  useEffect(() => {
+    const navBarRef = document.querySelector('.nav-bar');
+    const handleNavBarPadding = () => {
+      if (window.scrollY > 40 && navBarRef) {
+        navBarRef.classList.add('scrolled');
+      } else if (navBarRef) {
+        navBarRef.classList.remove('scrolled');
+      }
+    };
+    document.addEventListener('scroll', handleNavBarPadding);
+
+    return () => {
+      document.removeEventListener('scroll', handleNavBarPadding);
+    };
+  }, [loaded]);
+
+  if (!loaded) return null;
 
   return (
     <Grid.Container gap={2} justify="center" wrap="wrap">
-      <Grid xs={12} sm={12}>
+      <div className="after-header" />
+      <Grid xs={12} sm={12} className="nav-bar">
         <Card css={{ width: '100%' }}>
           <Grid.Container gap={2} justify="flex-start" css={{ padding: 0, paddingLeft: 10, paddingRight: 10 }}>
             <Grid xs={6} sm={6} css={{ padding: 0 }} alignItems="center">
@@ -48,8 +69,8 @@ const NavBar: FunctionComponent = () => {
               <>
                 <Button.Group ghost color="gradient" size="xs" css={{ margin: 0, marginRight: 5 }}>
                   <Button>Notifications</Button>
-                  <Button>Account</Button>
-                  <Button>Profile</Button>
+                  <Link href="/account" passHref><Button>Account</Button></Link>
+                  {/* <Button>Profile</Button> */}
                 </Button.Group>
 
                 <Button size="xs" ghost onClick={handleLogout}>Log out</Button>

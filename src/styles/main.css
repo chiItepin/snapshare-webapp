@@ -18,3 +18,26 @@
   max-width: 90%;
   margin: auto;
 }
+
+.after-header {
+  height: 70px;
+}
+
+.nav-bar {
+  position: fixed;
+  width: 100%;
+  z-index: 999;
+  transition: padding .3s ease;
+}
+
+.nav-bar > div {
+  transition: border-radius .3s ease;
+}
+
+.nav-bar.scrolled {
+  padding: 0;
+}
+
+.nav-bar.scrolled > div {
+  border-radius: 0;
+}
