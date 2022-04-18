@@ -1,16 +1,12 @@
 import React, { FunctionComponent, useState, useEffect } from 'react';
-import {
-  Card,
-  Grid,
-  Text,
-  Divider,
-  Button,
-} from '@nextui-org/react';
 import { GetServerSidePropsContext } from 'next';
+import { toast } from 'react-hot-toast';
+import { AxiosError } from 'axios';
 import withAuth from '../components/HOC/withAuth';
 import Post from '../api/Post';
 import IPost, { IPostsData } from '../templates/post';
 import PostsList from '../components/posts/PostsList';
+import useApi from '../useApi';
 
 interface IProps {
   postsData: IPostsData,
@@ -20,8 +16,58 @@ const Home: FunctionComponent<IProps> = ({
   postsData,
 }: IProps) => {
   const [posts, setPosts] = useState<IPost[]>(postsData?.docs || []);
+  const [nextPage, setNextPage] = useState(postsData.nextPage || null);
+  const { fetchPosts, apiLoaded } = useApi();
+
+  const handleLoadingNextPosts = React.useCallback(() => {
+    if (!nextPage) return;
+
+    const toastInfo = toast.loading('Loading more snaps...');
+    fetchPosts.getPosts(nextPage)
+      .then((res) => {
+        toast.dismiss(toastInfo);
+        const responseData = res.data.data as IPostsData;
+        setNextPage(responseData.nextPage);
+        const newPosts = [...posts, ...responseData.docs];
+        setPosts(newPosts);
+      })
+      .catch((err: AxiosError) => {
+        toast.error(err?.response?.data?.message || 'Unknown error occurred');
+      });
+  }, [nextPage, apiLoaded]);
+
+  useEffect(() => {
+    const postObserved = document.querySelector('.post-card:last-child');
+
+    const handleNextPage = (entries: IntersectionObserverEntry[], obs: IntersectionObserver) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          obs.unobserve(entry.target);
+          handleLoadingNextPosts();
+        }
+      });
+    };
+
+    const options = {
+      rootMargin: '0px',
+      threshold: 0,
+    };
+
+    const observer = new IntersectionObserver(handleNextPage, options);
+
+    if (apiLoaded) {
+      observer.observe(postObserved);
+    }
+
+    return () => {
+      observer.unobserve(postObserved);
+    };
+  }, [posts, apiLoaded]);
+
   return (
-    <PostsList posts={posts} />
+    <PostsList
+      posts={posts}
+    />
   );
 };
 

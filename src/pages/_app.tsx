@@ -83,12 +83,12 @@ const App: FunctionComponent<AppProps> = ({
 
           <Grid.Container>
             {!isGuestRoute() && (
-            <Grid xs={2} sm={2} css={{ position: 'relative' }}>
+            <Grid xs={0} sm={2} css={{ position: 'relative' }}>
               <SideBar />
             </Grid>
             )}
 
-            <Grid xs={isGuestRoute() ? 12 : 10} sm={isGuestRoute() ? 12 : 10}>
+            <Grid xs={12} sm={isGuestRoute() ? 12 : 10}>
               <main role="main" className="app">
                 <Container>
                   <Component {...pageProps} />
