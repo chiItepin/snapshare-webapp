@@ -1,3 +1,8 @@
+main {
+  height: 100%;
+  width: 100%;
+}
+
 .p-x {
   padding: 10px;
 }
@@ -20,7 +25,7 @@
 }
 
 .after-header {
-  height: 70px;
+  height: 80px;
 }
 
 .nav-bar {
@@ -28,6 +33,20 @@
   width: 100%;
   z-index: 999;
   transition: padding .3s ease;
+}
+
+.side-bar {
+  position: fixed;
+  top: 20px;
+  bottom: 0;
+  max-width: 16.6667%;
+  width: 100%;
+  padding: 80px 10px 0 10px;
+  border-right: 1px solid #e3e3e3;
+}
+
+.side-bar > div {
+  display: flex;
 }
 
 .nav-bar > div {

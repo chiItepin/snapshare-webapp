@@ -1,13 +1,20 @@
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, useState, useEffect } from 'react';
 import { AppProps } from 'next/app';
 import Head from 'next/head';
-import { Container, NextUIProvider } from '@nextui-org/react';
+import {
+  Container,
+  NextUIProvider,
+  Grid,
+  Progress,
+} from '@nextui-org/react';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
 import { Toaster } from 'react-hot-toast';
 import cookieCutter from 'cookie-cutter';
+import Router, { useRouter } from 'next/router';
 import reducer from '../reducer';
 import NavBar from '../components/ui/NavBar';
+import SideBar from '../components/ui/SideBar';
 import '../styles/main.css';
 
 const store = createStore(reducer);
@@ -24,30 +31,76 @@ store.subscribe(() => {
 const App: FunctionComponent<AppProps> = ({
   Component,
   pageProps,
-}: AppProps) => (
-  <>
-    <Head>
-      <link rel="shortcut icon" href="/icon.png" />
-      <title>Snapshare</title>
-      <meta name="description" content="Share snaps!" />
-    </Head>
+}: AppProps) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
-    <Provider store={store}>
-      <Toaster
-        position="top-right"
-      />
-      <NextUIProvider>
-        <NavBar />
+  const isGuestRoute = React.useCallback((): boolean => ['/login', '/signup'].includes(router.pathname), [router]);
 
-        <div className="app">
-          <Container>
-            <Component {...pageProps} />
-          </Container>
-        </div>
-      </NextUIProvider>
-    </Provider>
+  useEffect(() => {
+    const handleRouteChangeStart = () => {
+      setIsLoading(true);
+    };
 
-  </>
-);
+    const handleRouteChangeComplete = () => {
+      setIsLoading(false);
+    };
+
+    Router.events.on('routeChangeStart', handleRouteChangeStart);
+    Router.events.on('routeChangeComplete', handleRouteChangeComplete);
+    Router.events.on('routeChangeError', handleRouteChangeComplete);
+    return () => {
+      Router.events.off('routeChangeStart', handleRouteChangeStart);
+      Router.events.off('routeChangeComplete', handleRouteChangeComplete);
+      Router.events.off('routeChangeError', handleRouteChangeComplete);
+    };
+  }, []);
+
+  return (
+    <>
+      <Head>
+        <link rel="shortcut icon" href="/icon.png" />
+        <title>Snapshare</title>
+        <meta name="description" content="Share snaps!" />
+      </Head>
+
+      <Provider store={store}>
+        <Toaster
+          position="top-right"
+        />
+        <NextUIProvider>
+          {isLoading && (
+          <Progress
+            color="gradient"
+            squared
+            indeterminated
+            size="xs"
+            css={{ position: 'fixed', top: 0, zIndex: 9999 }}
+          />
+          )}
+
+          <NavBar />
+
+          <Grid.Container>
+            {!isGuestRoute() && (
+            <Grid xs={2} sm={2} css={{ position: 'relative' }}>
+              <SideBar />
+            </Grid>
+            )}
+
+            <Grid xs={isGuestRoute() ? 12 : 10} sm={isGuestRoute() ? 12 : 10}>
+              <main role="main" className="app">
+                <Container>
+                  <Component {...pageProps} />
+                </Container>
+              </main>
+            </Grid>
+          </Grid.Container>
+        </NextUIProvider>
+      </Provider>
+
+    </>
+  );
+};
 
 export default App;

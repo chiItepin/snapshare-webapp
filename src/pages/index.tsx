@@ -10,52 +10,18 @@ import { GetServerSidePropsContext } from 'next';
 import withAuth from '../components/HOC/withAuth';
 import Post from '../api/Post';
 import IPost, { IPostsData } from '../templates/post';
+import PostsList from '../components/posts/PostsList';
 
 interface IProps {
   postsData: IPostsData,
 }
 
-const PostsList: FunctionComponent<IProps> = ({
+const Home: FunctionComponent<IProps> = ({
   postsData,
 }: IProps) => {
   const [posts, setPosts] = useState<IPost[]>(postsData?.docs || []);
   return (
-    <Grid.Container gap={2} justify="center">
-
-      {posts.map((post) => (
-        <Grid key={post._id} xs={12} sm={8}>
-          <Card css={{ width: '100%' }}>
-            <Card.Header>
-              <Text b size={20}>Login</Text>
-            </Card.Header>
-            <Divider />
-
-            <Card.Body css={{ py: '$10' }}>
-              <Text>ssss</Text>
-            </Card.Body>
-
-            <Divider />
-            <Card.Footer>
-              <Grid.Container gap={2} justify="center">
-                <Grid xs={6} justify="center">
-                  <Button
-                    type="submit"
-                    size="xs"
-                  >
-                    Submit
-                  </Button>
-                </Grid>
-
-                <Grid xs={6} justify="center">
-                  <Text>ss</Text>
-                </Grid>
-              </Grid.Container>
-            </Card.Footer>
-          </Card>
-        </Grid>
-      ))}
-
-    </Grid.Container>
+    <PostsList posts={posts} />
   );
 };
 
@@ -75,4 +41,4 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   };
 };
 
-export default withAuth(PostsList);
+export default withAuth(Home);
