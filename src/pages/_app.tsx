@@ -72,7 +72,7 @@ const App: FunctionComponent<AppProps> = ({
           {isLoading && (
           <Progress
             color="gradient"
-            squared
+            squared="true"
             indeterminated
             size="xs"
             css={{ position: 'fixed', top: 0, zIndex: 9999 }}

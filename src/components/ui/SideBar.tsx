@@ -8,7 +8,6 @@ const SideBar: FunctionComponent = () => (
   <aside className="side-bar">
     <Button.Group
       vertical
-      flat
       auto
       light
     >

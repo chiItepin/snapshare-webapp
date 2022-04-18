@@ -45,6 +45,10 @@ main {
   border-right: 1px solid #e3e3e3;
 }
 
+.nextui-user-name {
+  text-transform: none !important;
+}
+
 .side-bar > div {
   display: flex;
 }

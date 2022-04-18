@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from 'react';
-import moment from 'moment';
+// import moment from 'moment';
 import {
   Card,
   Grid,
@@ -19,7 +19,7 @@ const AccountView: FunctionComponent = () => {
         <Card css={{ width: '100%' }}>
           <Card.Header>
             <User
-              src={user?.image ? user.image : ''}
+              src={user?.image ? `data:image/png;base64, ${user.image}` : ''}
               name={user.email}
               text={user.email}
               bordered
