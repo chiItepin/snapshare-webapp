@@ -3,7 +3,7 @@ import { GetServerSidePropsContext } from 'next';
 import { toast } from 'react-hot-toast';
 import { AxiosError } from 'axios';
 import withAuth from '../components/HOC/withAuth';
-import Post from '../api/Post';
+import Post from '../apiHandlers/Post';
 import IPost, { IPostsData } from '../templates/post';
 import PostsList from '../components/posts/PostsList';
 import useApi from '../useApi';
@@ -19,7 +19,7 @@ const Home: FunctionComponent<IProps> = ({
   const [nextPage, setNextPage] = useState(postsData.nextPage || null);
   const { fetchPosts, apiLoaded } = useApi();
 
-  const handleLoadingNextPosts = React.useCallback(() => {
+  const handleLoadingNextPosts = React.useCallback((): void => {
     if (!nextPage) return;
 
     const toastInfo = toast.loading('Loading more snaps...');
@@ -35,6 +35,25 @@ const Home: FunctionComponent<IProps> = ({
         toast.error(err?.response?.data?.message || 'Unknown error occurred');
       });
   }, [nextPage, apiLoaded]);
+
+  const handlePostLike = React.useCallback((postId: string): void => {
+    const toastInfo = toast.loading('Sending your like...');
+    fetchPosts.togglePostLike(postId)
+      .then((res) => {
+        toast.dismiss(toastInfo);
+        const responseData = res.data.data as IPost;
+        setPosts((items) => items.map((i) => {
+          const newPost = { ...i };
+          if (i._id === postId) {
+            newPost.likes = responseData.likes;
+          }
+          return newPost;
+        }));
+      })
+      .catch((err: AxiosError) => {
+        toast.error(err?.response?.data?.message || 'Unknown error occurred');
+      });
+  }, [posts, apiLoaded]);
 
   useEffect(() => {
     const postObserved = document.querySelector('.post-card:last-child');
@@ -60,13 +79,16 @@ const Home: FunctionComponent<IProps> = ({
     }
 
     return () => {
-      observer.unobserve(postObserved);
+      if (postObserved) observer.unobserve(postObserved);
     };
   }, [posts, apiLoaded]);
+
+  if (!apiLoaded) return null;
 
   return (
     <PostsList
       posts={posts}
+      handlePostLike={handlePostLike}
     />
   );
 };

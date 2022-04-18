@@ -7,14 +7,16 @@ import IPost from '../../templates/post';
 
 interface IProps {
   posts: IPost[],
+  handlePostLike: (postId: string) => void,
 }
 
 const PostsList: FunctionComponent<IProps> = ({
   posts,
+  handlePostLike,
 }: IProps) => (
   <Grid.Container gap={2} justify="center">
 
-    {posts.map((post) => <Post key={post._id} post={post} />)}
+    {posts.map((post) => <Post key={post._id} post={post} handlePostLike={handlePostLike} />)}
 
   </Grid.Container>
 );

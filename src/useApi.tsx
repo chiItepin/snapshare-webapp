@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import axios, { AxiosResponse } from 'axios';
 import IUser from './templates/user';
 import { useAppSelector } from './reducer';
+import Post from './apiHandlers/Post';
 
 interface IRequestPosts {
   // createPost: (content: string, images: IImage[]) => Promise<AxiosResponse<any>>;
@@ -42,6 +43,7 @@ const useApi = (): IApi => {
   const [loaded, setLoaded] = useState(false);
   const [token, setToken] = useState('');
   const user = useAppSelector((state) => state.user);
+  const apiPost = new Post(token);
 
   const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
@@ -89,34 +91,7 @@ const useApi = (): IApi => {
     }),
   };
 
-  const fetchPosts = {
-    getPosts: (page: number): Promise<AxiosResponse<any>> => axios.get(`${baseUrl}/api/posts?page=${page}`, {
-      headers,
-    }),
-    getPost: (postId: string): Promise<AxiosResponse<any>> => axios.get(`${baseUrl}/api/posts/${postId}`, {
-      headers,
-    }),
-    searchPost: (searchQuery: string, page: number): Promise<AxiosResponse<any>> => axios.get(`${baseUrl}/api/posts/search/${searchQuery}?page=${page}`, {
-      headers,
-    }),
-    deletePost: (postId: string): Promise<AxiosResponse<any>> => axios.delete(`${baseUrl}/api/posts/${postId}`, {
-      headers,
-    }),
-    // createPost: (content: string, images: IImage[]): Promise<AxiosResponse<any>> => axios.post(`${baseUrl}/api/posts`, {
-    //   content,
-    //   images,
-    // }, {
-    //   headers,
-    // }),
-    togglePostLike: (postId: string): Promise<AxiosResponse<any>> => axios.patch(`${baseUrl}/api/posts/${postId}/like`, {}, {
-      headers,
-    }),
-    createPostComment: (postId: string, content: string): Promise<AxiosResponse<any>> => axios.post(`${baseUrl}/api/posts/${postId}/comments`, {
-      content,
-    }, {
-      headers,
-    }),
-  };
+  const fetchPosts = apiPost;
 
   const fetchFollowers = {
     getFollowers: (userId: string, page: number): Promise<AxiosResponse<any>> => axios.get(`${baseUrl}/api/followers/${userId}?page=${page}&limit=500`, {
