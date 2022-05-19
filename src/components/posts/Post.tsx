@@ -30,11 +30,16 @@ const Post: FunctionComponent<IProps> = ({
   };
 
   return (
-    <Grid xs={12} sm={8} className="post-card">
+    <Grid
+      xs={12}
+      sm={8}
+      lg={6}
+      className="post-card"
+    >
       <Card css={{ width: '100%' }} bordered shadow={false} borderWeight="light">
         <Card.Header>
           <User
-            src={post?.authorId.image ? `data:image/png;base64, ${post?.authorId.image}` : ''}
+            src={post?.authorId?.image ? `data:image/png;base64, ${post?.authorId.image}` : ''}
             text={post.authorId.email}
             name={`${post.authorId.email} - ${moment(post.createdAt).fromNow()}`}
             bordered

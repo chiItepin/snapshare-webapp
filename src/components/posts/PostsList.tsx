@@ -14,7 +14,15 @@ const PostsList: FunctionComponent<IProps> = ({
   posts,
   handlePostLike,
 }: IProps) => (
-  <Grid.Container gap={2} justify="center">
+  <Grid.Container
+    gap={2}
+    justify="center"
+    css={{
+      '@lg': {
+        alignItems: 'center',
+      },
+    }}
+  >
 
     {posts.map((post) => <Post key={post._id} post={post} handlePostLike={handlePostLike} />)}
 

@@ -10,9 +10,21 @@ import {
   Button,
 } from '@nextui-org/react';
 import { useAppSelector, IActions } from '../../reducer';
-import logo from '../../assets/icon.png';
+import logo from '../../../public/icon.png';
 
-const NavBar: FunctionComponent = () => {
+interface IProps {
+  backgroundColor?: string;
+  hasLogo?: boolean;
+  hasBounceOnScroll?: boolean,
+  hasShadow?: boolean,
+}
+
+const NavBar: FunctionComponent<IProps> = ({
+  backgroundColor,
+  hasLogo,
+  hasBounceOnScroll,
+  hasShadow,
+}: IProps) => {
   const user = useAppSelector((state) => state.user);
   const [loaded, setLoaded] = useState(false);
   const dispatch = useDispatch();
@@ -34,6 +46,8 @@ const NavBar: FunctionComponent = () => {
   }, []);
 
   useEffect(() => {
+    if (!loaded || !hasBounceOnScroll) return undefined;
+
     const navBarRef = document.querySelector('.nav-bar');
     const handleNavBarPadding = () => {
       if (window.scrollY > 40 && navBarRef) {
@@ -47,7 +61,7 @@ const NavBar: FunctionComponent = () => {
     return () => {
       document.removeEventListener('scroll', handleNavBarPadding);
     };
-  }, [loaded]);
+  }, [loaded, hasBounceOnScroll]);
 
   if (!loaded) return null;
 
@@ -56,14 +70,16 @@ const NavBar: FunctionComponent = () => {
       <Grid.Container gap={2} justify="center" wrap="wrap">
         <div className="after-header" />
         <Grid xs={12} sm={12} className="nav-bar">
-          <Card css={{ width: '100%' }}>
+          <Card css={{ width: '100%', backgroundColor }} shadow={hasShadow}>
             <Grid.Container gap={2} justify="flex-start" css={{ padding: 0, paddingLeft: 10, paddingRight: 10 }}>
               <Grid xs={6} sm={6} css={{ padding: 0 }} alignItems="center">
+                {hasLogo && (
                 <Link href={user?._id ? '/' : '/login'}>
                   <a>
                     <Image src={logo} alt="home" width={40} height={40} />
                   </a>
                 </Link>
+                )}
               </Grid>
               <Grid xs={6} sm={6} css={{ padding: 0 }} alignItems="center" justify="flex-end">
                 {!user?._id && <Link href="/login" passHref><Button ghost color="gradient" size="xs">Login</Button></Link>}
@@ -75,6 +91,13 @@ const NavBar: FunctionComponent = () => {
       </Grid.Container>
     </nav>
   );
+};
+
+NavBar.defaultProps = {
+  backgroundColor: 'white',
+  hasLogo: true,
+  hasBounceOnScroll: true,
+  hasShadow: true,
 };
 
 export default NavBar;

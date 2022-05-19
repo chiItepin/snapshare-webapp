@@ -10,4 +10,11 @@ interface IUser {
   expireDate?: string;
 }
 
+export const userData = {
+  _id: 'xxxxx',
+  email: 'hector@gmail.com',
+  token: 'xxx',
+  image: '',
+};
+
 export default IUser;

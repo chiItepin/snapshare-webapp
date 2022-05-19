@@ -79,7 +79,7 @@ const App: FunctionComponent<AppProps> = ({
           />
           )}
 
-          <NavBar />
+          <NavBar hasBounceOnScroll />
 
           <Grid.Container>
             {!isGuestRoute() && (

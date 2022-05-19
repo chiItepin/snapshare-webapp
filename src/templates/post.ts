@@ -1,4 +1,4 @@
-import IUser from './user';
+import IUser, { userData } from './user';
 import IPaginatedList from './pagination';
 
 export interface IComment {
@@ -35,5 +35,17 @@ interface IPost {
 export interface IPostsData extends IPaginatedList {
   docs: IPost[];
 }
+
+export const postData = {
+  _id: 'postIdxxx',
+  tags: ['ecommerce'],
+  categories: [],
+  content: 'Lorem ipsum',
+  authorId: { ...userData },
+  images: [],
+  comments: [],
+  likes: [],
+  createdAt: '2022-02-23T01:10:41.773Z',
+};
 
 export default IPost;
